@@ -63,3 +63,6 @@ openvas_host_address: "127.0.0.1"
 
 openvas_admin_user: "admin"
 openvas_admin_password: "secrete"
+
+openvas_targets:
+  - { address: "127.0.0.1" }

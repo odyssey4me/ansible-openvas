@@ -56,7 +56,7 @@
     - openvas-manager-setup
 
 - name: Create the Admin user for the Manager
-  command: openvasmd --create-user="{{ openvas_admin_user }}" --role=Admin
+  command: "openvasmd --create-user='{{ openvas_admin_user }}' --role=Admin"
   tags:
     - openvas-manager-setup
 
@@ -110,3 +110,4 @@
   tags:
     - openvas-manager-configure
     - openvas-cli-configure
+

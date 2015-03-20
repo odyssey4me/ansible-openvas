@@ -2,7 +2,7 @@
 # The address the OpenVAS Manager will listen on.
 #
 
-MANAGER_ADDRESS=127.0.0.1
+MANAGER_ADDRESS=0.0.0.0
 
 #
 # The port the OpenVAS Manager will listen on.
