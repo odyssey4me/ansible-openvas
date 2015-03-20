@@ -1,0 +1,128 @@
+---
+# Copyright 2015, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Install packages for OpenVAS Library
+  apt:
+    pkg: "{{ item }}"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 600
+  register: install_packages
+  until: install_packages|success
+  retries: 5
+  delay: 2
+  with_items: openvas_apt_packages['openvas_library']
+  tags:
+    - openvas-library-apt-install
+    - openvas-scanner-apt-install
+    - openvas-manager-apt-install
+    - openvas-cli-apt-install
+
+- name: Install packages for OpenVAS Scanner
+  apt:
+    pkg: "{{ item }}"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 600
+  register: install_packages
+  until: install_packages|success
+  retries: 5
+  delay: 2
+  with_items: openvas_apt_packages['openvas_scanner']
+  tags:
+    - openvas-scanner-apt-install
+
+- name: Install packages for OpenVAS Manager
+  apt:
+    pkg: "{{ item }}"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 600
+  register: install_packages
+  until: install_packages|success
+  retries: 5
+  delay: 2
+  with_items: openvas_apt_packages['openvas_manager']
+  tags:
+    - openvas-manager-apt-install
+
+- name: Install OpenVAS from source - cmake
+  command: "cmake .."
+  args:
+    chdir: "{{ openvas_src_path }}/{{ item.url | basename | replace('.tar.gz', '') }}/build"
+  with_items: openvas_src_packages
+  tags:
+    - openvas-library-src-install
+    - openvas-scanner-src-install
+    - openvas-manager-src-install
+    - openvas-cli-src-install
+
+- name: Install OpenVAS from source - make
+  command: "make"
+  args:
+    chdir: "{{ openvas_src_path }}/{{ item.url | basename | replace('.tar.gz', '') }}/build"
+  with_items: openvas_src_packages
+  tags:
+    - openvas-library-src-install
+    - openvas-scanner-src-install
+    - openvas-manager-src-install
+    - openvas-cli-src-install
+
+- name: Install OpenVAS from source - make doc-full
+  command: "make doc-full"
+  args:
+    chdir: "{{ openvas_src_path }}/{{ item.url | basename | replace('.tar.gz', '') }}/build"
+  with_items: openvas_src_packages
+  tags:
+    - openvas-library-src-install
+    - openvas-scanner-src-install
+    - openvas-manager-src-install
+    - openvas-cli-src-install
+
+- name: Install OpenVAS from source - make install
+  command: "make install"
+  args:
+    chdir: "{{ openvas_src_path }}/{{ item.url | basename | replace('.tar.gz', '') }}/build"
+  with_items: openvas_src_packages
+  tags:
+    - openvas-library-src-install
+    - openvas-scanner-src-install
+    - openvas-manager-src-install
+    - openvas-cli-src-install
+
+- name: Reload libraries
+  command: ldconfig
+  tags:
+    - openvas-library-src-install
+    - openvas-scanner-src-install
+    - openvas-manager-src-install
+    - openvas-cli-src-install
+
+- name: Deploy the upstart, init and logrotate files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode|default('0644') }}"
+  with_items:
+    - { src: "init.d/openvas-manager", dest: "/etc/init.d/openvas-manager", mode: "0755" }
+    - { src: "init.d/openvas-scanner", dest: "/etc/init.d/openvas-scanner", mode: "0755" }
+    - { src: "default/openvas-manager", dest: "/etc/default/openvas-manager" }
+    - { src: "default/openvas-scanner", dest: "/etc/default/openvas-scanner" }
+    - { src: "logrotate.d/openvas-manager", dest: "/etc/logrotate.d/openvas-manager" }
+    - { src: "logrotate.d/openvas-scanner", dest: "/etc/logrotate.d/openvas-scanner" }
+  tags:
+    - openvas-scanner-src-install
+    - openvas-manager-src-install
+
