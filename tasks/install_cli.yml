@@ -1,0 +1,65 @@
+---
+# Copyright 2015, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Download the source for OpenVAS CLI
+  get_url:
+    url: "{{ openvas_src_cli }}"
+    dest: "{{ openvas_src_path }}/{{ openvas_src_cli | basename }}"
+    mode: "0644"
+  register: package_download
+  retries: 3
+  delay: 10
+  until: package_download|success
+  tags:
+    - openvas-cli-src-download
+
+- name: Create the directory for OpenVAS CLI source extraction
+  file:
+    path: "{{ openvas_src_path }}/{{ openvas_src_cli | basename | replace('.tar.gz', '') }}/build"
+    state: "directory"
+    group: "root"
+    owner: "root"
+    mode: "0755"
+    recurse: "false"
+  tags:
+    - openvas-cli-src-extract
+
+- name: Extract the source for OpenVAS CLI
+  unarchive:
+    copy: "no"
+    src: "{{ openvas_src_path }}/{{ openvas_src_cli | basename }}"
+    dest: "{{ openvas_src_path }}/"
+  tags:
+    - openvas-cli-src-extract
+
+- name: Check for OpenVAS CLI Makefile
+  stat:
+    path: "{{ openvas_src_path }}/{{ openvas_src_cli | basename | replace('.tar.gz', '') }}/build/Makefile"
+  register: openvas_cli_makefile
+  tags:
+    - openvas-cli-apt-install
+
+- name: Install OpenVAS CLI from source
+  command: "{{ item }}"
+  args:
+    chdir: "{{ openvas_src_path }}/{{ openvas_src_cli | basename | replace('.tar.gz', '') }}/build"
+  with_items:
+    - "cmake .."
+    - "make"
+    - "make doc-full"
+    - "make install"
+  when: openvas_cli_makefile.stat.exists == False
+  tags:
+    - openvas-cli-src-install

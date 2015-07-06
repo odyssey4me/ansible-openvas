@@ -1,0 +1,91 @@
+---
+# Copyright 2015, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Download the source for OpenVAS Manager
+  get_url:
+    url: "{{ openvas_src_manager }}"
+    dest: "{{ openvas_src_path }}/{{ openvas_src_manager | basename }}"
+    mode: "0644"
+  register: package_download
+  retries: 3
+  delay: 10
+  until: package_download|success
+  tags:
+    - openvas-manager-src-download
+
+- name: Create the directory for OpenVAS Manager source extraction
+  file:
+    path: "{{ openvas_src_path }}/{{ openvas_src_manager | basename | replace('.tar.gz', '') }}/build"
+    state: "directory"
+    group: "root"
+    owner: "root"
+    mode: "0755"
+    recurse: "false"
+  tags:
+    - openvas-manager-src-extract
+
+- name: Extract the source for OpenVAS Manager
+  unarchive:
+    copy: "no"
+    src: "{{ openvas_src_path }}/{{ openvas_src_manager | basename }}"
+    dest: "{{ openvas_src_path }}/"
+  tags:
+    - openvas-manager-src-extract
+
+- name: Install packages for OpenVAS Manager
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 600
+  register: install_packages
+  until: install_packages|success
+  retries: 5
+  delay: 2
+  with_items: openvas_apt_packages['openvas_manager']
+  tags:
+    - openvas-manager-apt-install
+
+- name: Check for OpenVAS Manager Makefile
+  stat:
+    path: "{{ openvas_src_path }}/{{ openvas_src_manager | basename | replace('.tar.gz', '') }}/build/Makefile"
+  register: openvas_manager_makefile
+  tags:
+    - openvas-manager-apt-install
+
+- name: Install OpenVAS Manager from source
+  command: "{{ item }}"
+  args:
+    chdir: "{{ openvas_src_path }}/{{ openvas_src_manager | basename | replace('.tar.gz', '') }}/build"
+  with_items:
+    - "cmake .."
+    - "make"
+    - "make doc-full"
+    - "make install"
+  when: openvas_manager_makefile.stat.exists == False
+  tags:
+    - openvas-manager-src-install
+
+- name: Deploy the upstart, init and logrotate files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode|default('0644') }}"
+  with_items:
+    - { src: "init.d/openvas-manager", dest: "/etc/init.d/openvas-manager", mode: "0755" }
+    - { src: "default/openvas-manager", dest: "/etc/default/openvas-manager" }
+    - { src: "logrotate.d/openvas-manager", dest: "/etc/logrotate.d/openvas-manager" }
+  tags:
+    - openvas-manager-src-install

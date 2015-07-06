@@ -97,7 +97,7 @@
   tags:
     - openvas-manager-configure
 
-- name: Set the admin user's password
+- name: Set the admin user password
   command: openvasmd --user="{{ openvas_admin_user }}" --new-password="{{ openvas_admin_password }}"
   tags:
     - openvas-manager-configure
@@ -111,3 +111,4 @@
     - openvas-manager-configure
     - openvas-cli-configure
 
+- include: scan_configure.yml

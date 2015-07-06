@@ -13,7 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: openvas_pre_install.yml
-- include: openvas_install.yml
-- include: openvas_post_install.yml
-- include: openvas_scan_configure.yml
+- include: install_library.yml
+- include: install_scanner.yml
+- include: install_manager.yml
+- include: install_cli.yml
+- include: post_install.yml
+- include: scan_configure.yml

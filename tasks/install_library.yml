@@ -1,0 +1,106 @@
+---
+# Copyright 2015, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Download the source for OpenVAS Library
+  get_url:
+    url: "{{ openvas_src_library }}"
+    dest: "{{ openvas_src_path }}/{{ openvas_src_library | basename }}"
+    mode: "0644"
+  register: package_download
+  retries: 3
+  delay: 10
+  until: package_download|success
+  tags:
+    - openvas-library-src-download
+    - openvas-scanner-src-download
+    - openvas-manager-src-download
+    - openvas-cli-src-download
+
+- name: Create the directory for OpenVAS Library source extraction
+  file:
+    path: "{{ openvas_src_path }}/{{ openvas_src_library | basename | replace('.tar.gz', '') }}/build"
+    state: "directory"
+    group: "root"
+    owner: "root"
+    mode: "0755"
+    recurse: "false"
+  tags:
+    - openvas-library-src-extract
+    - openvas-scanner-src-extract
+    - openvas-manager-src-extract
+    - openvas-cli-src-extract
+
+- name: Extract the source for OpenVAS Library
+  unarchive:
+    copy: "no"
+    src: "{{ openvas_src_path }}/{{ openvas_src_library | basename }}"
+    dest: "{{ openvas_src_path }}/"
+  tags:
+    - openvas-library-src-extract
+    - openvas-scanner-src-extract
+    - openvas-manager-src-extract
+    - openvas-cli-src-extract
+    - openvas-cli-src-clean
+
+- name: Install packages for OpenVAS Library
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 600
+  register: install_packages
+  until: install_packages|success
+  retries: 5
+  delay: 2
+  with_items: openvas_apt_packages['openvas_library']
+  tags:
+    - openvas-library-apt-install
+    - openvas-scanner-apt-install
+    - openvas-manager-apt-install
+    - openvas-cli-apt-install
+
+- name: Check for OpenVAS Library Makefile
+  stat:
+    path: "{{ openvas_src_path }}/{{ openvas_src_library | basename | replace('.tar.gz', '') }}/build/Makefile"
+  register: openvas_library_makefile
+  tags:
+    - openvas-library-apt-install
+    - openvas-scanner-apt-install
+    - openvas-manager-apt-install
+    - openvas-cli-apt-install
+
+- name: Install OpenVAS Library from source
+  command: "{{ item }}"
+  args:
+    chdir: "{{ openvas_src_path }}/{{ openvas_src_library | basename | replace('.tar.gz', '') }}/build"
+  with_items:
+    - "cmake .."
+    - "make"
+    - "make doc-full"
+    - "make install"
+  when: openvas_library_makefile.stat.exists == False
+  tags:
+    - openvas-library-src-install
+    - openvas-scanner-src-install
+    - openvas-manager-src-install
+    - openvas-cli-src-install
+
+- name: Reload libraries
+  command: ldconfig
+  tags:
+    - openvas-library-src-install
+    - openvas-scanner-src-install
+    - openvas-manager-src-install
+    - openvas-cli-src-install
