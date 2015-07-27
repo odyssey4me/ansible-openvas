@@ -14,8 +14,19 @@
 # limitations under the License.
 
 - include: install_library.yml
+  tags: openvas-library
+
 - include: install_scanner.yml
+  tags: openvas-scanner
+
 - include: install_manager.yml
+  tags: openvas-manager
+
 - include: install_cli.yml
+  tags: openvas-cli
+
 - include: post_install.yml
+  tags: openvas-post-install
+
 - include: scan_configure.yml
+  tags: openvas-scan-configure
