@@ -19,7 +19,7 @@ install:
 
 script:
   # Check the role/playbook's syntax.
-  - ansible-playbook -i tests/inventory tests/test.yml --syntax-check
+  - ansible-playbook -i tests/inventory tests/test.yml --syntax-check --list-tasks
   # Complete a lint check on the playbook/role
   - ansible-lint tests/test.yml
   # Run the role/playbook with ansible-playbook.
