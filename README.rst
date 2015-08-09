@@ -2,6 +2,8 @@ Ansible OpenVAS
 ###############
 .. image:: https://travis-ci.org/odyssey4me/ansible-openvas.svg?branch=master
     :target: https://travis-ci.org/odyssey4me/ansible-openvas
+.. image:: https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg?style=flat
+    :target: http://opensource.org/licenses/apache-2.0
 
 :tags: openvas, security, ansible
 :category: \*nix
