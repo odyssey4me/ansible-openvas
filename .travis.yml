@@ -17,13 +17,20 @@ install:
   # Add ansible.cfg to pick up roles path.
   - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
 
+  #
+  # Add callback plugins
+  #
+  - mkdir -p /usr/share/ansible_plugins/callback_plugins/
+  # This plugin makes the output easier to read
+  - wget -O /usr/share/ansible_plugins/callback_plugins/human_log.py https://gist.githubusercontent.com/cliffano/9868180/raw/f360f306b3c6d689734a6aa8773a00edf16a0054/human_log.py
+
 script:
   # Check the role/playbook's syntax.
   - ansible-playbook -i tests/inventory tests/test.yml --syntax-check --list-tasks
   # Complete a lint check on the playbook/role
   - ansible-lint tests/test.yml
   # Run the role/playbook with ansible-playbook.
-  - ansible-playbook -vv -i tests/inventory tests/test.yml --sudo
+  - ansible-playbook -i tests/inventory tests/test.yml --sudo
   # Run the role/playbook again, checking to make sure it's idempotent.
   - >
     ansible-playbook -i tests/inventory tests/test.yml --sudo
