@@ -47,10 +47,14 @@
 
 - name: Deploy the OpenSSL Default Configuration File
   template:
-    src: openssl.cnf.j2
+    src: "{{ item }}"
     dest: /etc/ssl/openssl.cnf
     owner: root
     group: root
     mode: "0644"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}.openssl.cnf.j2"
+    - "{{ ansible_os_family | lower }}.openssl.cnf.j2"
+    - "openssl.cnf.j2"
   tags:
     - openvas-ssl-ca-config

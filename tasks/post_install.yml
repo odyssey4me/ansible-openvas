@@ -104,9 +104,13 @@
 
 - name: Deploy omp.config
   template:
-    src: "omp.config.j2"
+    src: "{{ item }}"
     dest: "~/omp.config"
     mode: "0644"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}.omp.config.j2"
+    - "{{ ansible_os_family | lower }}.omp.config.j2"
+    - "omp.config.j2"
   tags:
     - openvas-manager-configure
     - openvas-cli-configure
