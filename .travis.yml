@@ -20,9 +20,9 @@ install:
   #
   # Add callback plugins
   #
-  - mkdir -p /usr/share/ansible_plugins/callback_plugins/
+  - mkdir -p ~/.ansible/plugins/callback_plugins
   # This plugin makes the output easier to read
-  - wget -O /usr/share/ansible_plugins/callback_plugins/human_log.py https://gist.githubusercontent.com/cliffano/9868180/raw/f360f306b3c6d689734a6aa8773a00edf16a0054/human_log.py
+  - wget -O ~/.ansible/plugins/callback_plugins/human_log.py https://gist.githubusercontent.com/cliffano/9868180/raw/f360f306b3c6d689734a6aa8773a00edf16a0054/human_log.py
 
 script:
   # Check the role/playbook's syntax.
