@@ -25,8 +25,11 @@
 - include: install_cli.yml
   tags: openvas-cli
 
-- include: post_install.yml
-  tags: openvas-post-install
+- include: install_openssl_ca.yml
+  tags: openvas-openssl-ca
 
-- include: scan_configure.yml
-  tags: openvas-scan-configure
+#- include: post_install.yml
+#  tags: openvas-post-install
+
+#- include: scan_configure.yml
+#  tags: openvas-scan-configure

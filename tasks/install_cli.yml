@@ -49,7 +49,7 @@
     path: "{{ openvas_src_path }}/{{ openvas_src_cli | basename | replace('.tar.gz', '') }}/build/Makefile"
   register: openvas_cli_makefile
   tags:
-    - openvas-cli-apt-install
+    - openvas-cli-src-install
 
 - name: Install OpenVAS CLI from source
   command: "{{ item }}"

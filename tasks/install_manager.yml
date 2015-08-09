@@ -63,7 +63,7 @@
     path: "{{ openvas_src_path }}/{{ openvas_src_manager | basename | replace('.tar.gz', '') }}/build/Makefile"
   register: openvas_manager_makefile
   tags:
-    - openvas-manager-apt-install
+    - openvas-manager-src-install
 
 - name: Install OpenVAS Manager from source
   command: "{{ item }}"

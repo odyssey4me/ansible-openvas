@@ -47,20 +47,29 @@ openvas_apt_packages:
     - texlive-latex-extra
     - texlive-latex-recommended
 
-openvas_src_path: "/usr/local/src"
+openvas_src_path: /usr/local/src
 
-openvas_src_library: "http://wald.intevation.org/frs/download.php/2067/openvas-libraries-8.0.3.tar.gz"
-openvas_src_scanner: "http://wald.intevation.org/frs/download.php/2071/openvas-scanner-5.0.3.tar.gz"
-openvas_src_manager: "http://wald.intevation.org/frs/download.php/2075/openvas-manager-6.0.3.tar.gz"
-openvas_src_cli: "http://wald.intevation.org/frs/download.php/2093/openvas-cli-1.4.1.tar.gz"
+openvas_src_library: http://wald.intevation.org/frs/download.php/2067/openvas-libraries-8.0.3.tar.gz
+openvas_src_scanner: http://wald.intevation.org/frs/download.php/2071/openvas-scanner-5.0.3.tar.gz
+openvas_src_manager: http://wald.intevation.org/frs/download.php/2075/openvas-manager-6.0.3.tar.gz
+openvas_src_cli: http://wald.intevation.org/frs/download.php/2093/openvas-cli-1.4.1.tar.gz
 
-openvas_iana_datafile: "/tmp/openvas_iana_datafile.xml"
-openvas_iana_datasource: "http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xml"
+openvas_ca_cert_path: /usr/local/var/lib/openvas/CA
+openvas_ca_key_path: /usr/local/var/lib/openvas/private/CA
+openvas_ca_default_bits: 4096
+openvas_ca_countryName_default: DE
+openvas_ca_stateOrProvinceName_default: None
+openvas_ca_localityName_default: Berlin
+openvas_ca_organizationName_default: OpenVAS Users United
+openvas_ca_organizationalUnitName_default: None
 
-openvas_host_address: "127.0.0.1"
+openvas_iana_datafile: /tmp/openvas_iana_datafile.xml
+openvas_iana_datasource: http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xml
 
-openvas_admin_user: "admin"
-openvas_admin_password: "secrete"
+openvas_host_address: 127.0.0.1
+
+openvas_admin_user: admin
+openvas_admin_password: secrete
 
 openvas_targets:
-  - { address: "127.0.0.1" }
+  - { address: 127.0.0.1 }

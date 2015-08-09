@@ -52,7 +52,6 @@
     - openvas-scanner-src-extract
     - openvas-manager-src-extract
     - openvas-cli-src-extract
-    - openvas-cli-src-clean
 
 - name: Install packages for OpenVAS Library
   apt:
@@ -76,10 +75,10 @@
     path: "{{ openvas_src_path }}/{{ openvas_src_library | basename | replace('.tar.gz', '') }}/build/Makefile"
   register: openvas_library_makefile
   tags:
-    - openvas-library-apt-install
-    - openvas-scanner-apt-install
-    - openvas-manager-apt-install
-    - openvas-cli-apt-install
+    - openvas-library-src-install
+    - openvas-scanner-src-install
+    - openvas-manager-src-install
+    - openvas-cli-src-install
 
 - name: Install OpenVAS Library from source
   command: "{{ item }}"
@@ -99,6 +98,7 @@
 
 - name: Reload libraries
   command: ldconfig
+  when: openvas_library_makefile.stat.exists == False
   tags:
     - openvas-library-src-install
     - openvas-scanner-src-install

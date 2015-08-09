@@ -63,7 +63,7 @@
     path: "{{ openvas_src_path }}/{{ openvas_src_scanner | basename | replace('.tar.gz', '') }}/build/Makefile"
   register: openvas_scanner_makefile
   tags:
-    - openvas-scanner-apt-install
+    - openvas-scanner-src-install
 
 - name: Install OpenVAS Scanner from source
   command: "{{ item }}"

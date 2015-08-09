@@ -110,5 +110,3 @@
   tags:
     - openvas-manager-configure
     - openvas-cli-configure
-
-- include: scan_configure.yml
