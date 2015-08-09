@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Create OpenVAS CA Certificates
-  command: openvas-mkcert -q
+  command: bash -x openvas-mkcert -q
   args:
     creates: "/usr/local/var/lib/openvas/CA"
   tags:
