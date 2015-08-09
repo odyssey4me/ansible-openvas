@@ -23,7 +23,7 @@ script:
   # Complete a lint check on the playbook/role
   - ansible-lint tests/test.yml
   # Run the role/playbook with ansible-playbook.
-  - ansible-playbook -i tests/inventory tests/test.yml --sudo
+  - ansible-playbook -vv -i tests/inventory tests/test.yml --sudo
   # Run the role/playbook again, checking to make sure it's idempotent.
   - >
     ansible-playbook -i tests/inventory tests/test.yml --sudo
