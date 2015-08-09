@@ -13,40 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-openvas_apt_packages:
-  openvas_library:
-    - bison
-    - build-essential
-    - cmake
-    - doxygen
-    - libksba-dev
-    - libgcrypt11-dev
-    - libglib2.0-dev
-    - libgnutls-dev
-    - libgpgme11-dev
-    - libhiredis-dev
-    - libldap2-dev
-    - libpcap-dev
-    - libsnmp-dev
-    - libsql-translator-perl
-    - libssh-dev
-    - libsqlite3-dev
-    - pkg-config
-    - sqlite3
-    - uuid-dev
-    - xmltoman
-    - xsltproc
-  openvas_scanner:
-    - curl
-    - nmap
-    - rsync
-    - wget
-  openvas_manager:
-    - htmldoc
-    - texlive-latex-base
-    - texlive-latex-extra
-    - texlive-latex-recommended
-
 openvas_src_path: /usr/local/src
 
 openvas_src_library: http://wald.intevation.org/frs/download.php/2067/openvas-libraries-8.0.3.tar.gz

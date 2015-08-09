@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- include: install_common.yml
+
 - name: Download the source for OpenVAS CLI
   get_url:
     url: "{{ openvas_src_cli }}"

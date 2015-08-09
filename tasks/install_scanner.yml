@@ -13,6 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- include: install_common.yml
+
+- name: Install packages for OpenVAS Scanner
+  action: >
+    {{ ansible_pkg_mgr }} name={{ item }} state=present
+  register: install_packages
+  until: install_packages|success
+  retries: 5
+  delay: 2
+  with_items: openvas_packages['openvas_scanner']
+  tags:
+    - openvas-scanner-package-install
+
 - name: Download the source for OpenVAS Scanner
   get_url:
     url: "{{ openvas_src_scanner }}"
@@ -43,20 +56,6 @@
     dest: "{{ openvas_src_path }}/"
   tags:
     - openvas-scanner-src-extract
-
-- name: Install packages for OpenVAS Scanner
-  apt:
-    pkg: "{{ item }}"
-    state: present
-    update_cache: yes
-    cache_valid_time: 600
-  register: install_packages
-  until: install_packages|success
-  retries: 5
-  delay: 2
-  with_items: openvas_apt_packages['openvas_scanner']
-  tags:
-    - openvas-scanner-apt-install
 
 - name: Check for OpenVAS Scanner Makefile
   stat:
