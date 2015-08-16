@@ -20,14 +20,18 @@ openvas_src_scanner: http://wald.intevation.org/frs/download.php/2071/openvas-sc
 openvas_src_manager: http://wald.intevation.org/frs/download.php/2075/openvas-manager-6.0.3.tar.gz
 openvas_src_cli: http://wald.intevation.org/frs/download.php/2093/openvas-cli-1.4.1.tar.gz
 
-openvas_ca_cert_path: /usr/local/var/lib/openvas/CA
-openvas_ca_key_path: /usr/local/var/lib/openvas/private/CA
+openvas_ca_base_path: /usr/local/var/lib/openvas
+openvas_ca_cert_path: "{{ openvas_ca_base_path }}/CA"
+openvas_ca_key_path: "{{ openvas_ca_base_path }}/private/CA"
+openvas_ca_name: OpenVAS-CA
 openvas_ca_default_bits: 4096
 openvas_ca_countryName_default: DE
 openvas_ca_stateOrProvinceName_default: None
 openvas_ca_localityName_default: Berlin
 openvas_ca_organizationName_default: OpenVAS Users United
 openvas_ca_organizationalUnitName_default: None
+openvas_ca_cert_subject: "/C={{ openvas_ca_countryName_default }}/ST={{ openvas_ca_stateOrProvinceName_default }}/L={{ openvas_ca_localityName_default }}/O={{ openvas_ca_organizationName_default }}/CN={{ ansible_hostname }}/subjectAltName=IP.1={{ ansible_default_ipv4.address }}"
+openvas_ca_serial: 1000
 
 openvas_iana_datafile: /tmp/openvas_iana_datafile.xml
 openvas_iana_datasource: http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xml

@@ -35,26 +35,26 @@ tsa_policy3 = 1.2.3.4.5.7
 
 ####################################################################
 [ ca ]
-default_ca  = CA_default        # The default ca section
+default_ca  = {{ openvas_ca_name }}        # The default ca section
 
 ####################################################################
-[ CA_default ]
+[ {{ openvas_ca_name }} ]
 
-dir     = ./demoCA      # Where everything is kept
-certs       = $dir/certs        # Where the issued certs are kept
-crl_dir     = $dir/crl      # Where the issued crl are kept
+dir         = {{ openvas_ca_cert_path }}          # Where everything is kept
+certs       = $dir        # Where the issued certs are kept
+crl_dir     = $dir/crl          # Where the issued crl are kept
 database    = $dir/index.txt    # database index file.
 #unique_subject = no            # Set to 'no' to allow creation of
-                    # several ctificates with same subject.
-new_certs_dir   = $dir/newcerts     # default place for new certs.
+                                # several ctificates with same subject.
+new_certs_dir   = $dir/newcerts # default place for new certs.
 
 certificate = $dir/cacert.pem   # The CA certificate
 serial      = $dir/serial       # The current serial number
 crlnumber   = $dir/crlnumber    # the current crl number
-                    # must be commented out to leave a V1 CRL
-crl     = $dir/crl.pem      # The current CRL
-private_key = $dir/private/cakey.pem# The private key
-RANDFILE    = $dir/private/.rand    # private random number file
+                                # must be commented out to leave a V1 CRL
+crl         = $dir/crl.pem      # The current CRL
+private_key = {{ openvas_ca_key_path }}/cakey.pem   # The private key
+RANDFILE    = {{ openvas_ca_key_path }}/.rand    # private random number file
 
 x509_extensions = usr_cert      # The extentions to add to the cert
 
@@ -73,8 +73,8 @@ cert_opt    = ca_default        # Certificate field options
 
 default_days    = 365           # how long to certify for
 default_crl_days= 30            # how long before next CRL
-default_md  = default       # use public key default MD
-preserve    = no            # keep passed DN ordering
+default_md      = default       # use public key default MD
+preserve        = no            # keep passed DN ordering
 
 # A few difference way of specifying how similar the request should look
 # For type CA, the listed attributes must be the same, and the optional
@@ -83,32 +83,32 @@ policy      = policy_match
 
 # For the CA policy
 [ policy_match ]
-countryName     = match
-stateOrProvinceName = match
-organizationName    = match
+countryName             = match
+stateOrProvinceName     = match
+organizationName        = match
 organizationalUnitName  = optional
-commonName      = supplied
-emailAddress        = optional
+commonName              = supplied
+emailAddress            = optional
 
 # For the 'anything' policy
 # At this point in time, you must list all acceptable 'object'
 # types.
 [ policy_anything ]
-countryName     = optional
-stateOrProvinceName = optional
-localityName        = optional
-organizationName    = optional
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
 organizationalUnitName  = optional
-commonName      = supplied
-emailAddress        = optional
+commonName              = supplied
+emailAddress            = optional
 
 ####################################################################
 [ req ]
 default_bits        = {{ openvas_ca_default_bits }}
 default_keyfile     = privkey.pem
 distinguished_name  = req_distinguished_name
-attributes      = req_attributes
-x509_extensions = v3_ca # The extentions to add to the self signed cert
+attributes          = req_attributes
+x509_extensions     = v3_ca # The extentions to add to the self signed cert
 
 # Passwords for private keys if not present they will be prompted for
 # input_password = secret
@@ -126,39 +126,39 @@ string_mask = utf8only
 # req_extensions = v3_req # The extensions to add to a certificate request
 
 [ req_distinguished_name ]
-countryName         = Country Name (2 letter code)
+countryName             = Country Name (2 letter code)
 countryName_default     = {{ openvas_ca_countryName_default }}
 countryName_min         = 2
 countryName_max         = 2
 
-stateOrProvinceName     = State or Province Name (full name)
+stateOrProvinceName         = State or Province Name (full name)
 stateOrProvinceName_default = {{ openvas_ca_stateOrProvinceName_default }}
 
 localityName            = Locality Name (eg, city)
-localityName_default            = {{ openvas_ca_localityName_default }}
+localityName_default    = {{ openvas_ca_localityName_default }}
 
-0.organizationName      = Organization Name (eg, company)
+0.organizationName          = Organization Name (eg, company)
 0.organizationName_default  = {{ openvas_ca_organizationName_default }}
 
 # we can do this but it is not needed normally :-)
 #1.organizationName     = Second Organization Name (eg, company)
 #1.organizationName_default = World Wide Web Pty Ltd
 
-organizationalUnitName      = Organizational Unit Name (eg, section)
+organizationalUnitName          = Organizational Unit Name (eg, section)
 organizationalUnitName_default  = {{ openvas_ca_organizationalUnitName_default }}
 
 commonName          = Common Name (e.g. server FQDN or YOUR name)
-commonName_max          = 64
+commonName_max      = 64
 
-emailAddress            = Email Address
-emailAddress_max        = 64
+emailAddress        = Email Address
+emailAddress_max    = 64
 
 # SET-ex3           = SET extension number 3
 
 [ req_attributes ]
 challengePassword       = A challenge password
-challengePassword_min       = 4
-challengePassword_max       = 20
+challengePassword_min   = 4
+challengePassword_max   = 20
 
 unstructuredName        = An optional company name
 
@@ -329,24 +329,24 @@ default_tsa = tsa_config1   # the default TSA section
 [ tsa_config1 ]
 
 # These are used by the TSA reply generation only.
-dir     = ./demoCA      # TSA root directory
-serial      = $dir/tsaserial    # The current serial number (mandatory)
-crypto_device   = builtin       # OpenSSL engine to use for signing
-signer_cert = $dir/tsacert.pem  # The TSA signing certificate
-                    # (optional)
-certs       = $dir/cacert.pem   # Certificate chain to include in reply
-                    # (optional)
-signer_key  = $dir/private/tsakey.pem # The TSA private key (optional)
+dir     = ./demoCA                                  # TSA root directory
+serial      = $dir/tsaserial                        # The current serial number (mandatory)
+crypto_device   = builtin                           # OpenSSL engine to use for signing
+signer_cert = $dir/tsacert.pem                      # The TSA signing certificate
+                                                    # (optional)
+certs       = $dir/cacert.pem                       # Certificate chain to include in reply
+                                                    # (optional)
+signer_key  = $dir/private/tsakey.pem               # The TSA private key (optional)
 
-default_policy  = tsa_policy1       # Policy if request did not specify it
-                    # (optional)
-other_policies  = tsa_policy2, tsa_policy3  # acceptable policies (optional)
-digests     = md5, sha1     # Acceptable message digests (mandatory)
+default_policy  = tsa_policy1                       # Policy if request did not specify it
+                                                    # (optional)
+other_policies  = tsa_policy2, tsa_policy3          # acceptable policies (optional)
+digests     = md5, sha1                             # Acceptable message digests (mandatory)
 accuracy    = secs:1, millisecs:500, microsecs:100  # (optional)
-clock_precision_digits  = 0 # number of digits after dot. (optional)
-ordering        = yes   # Is ordering defined for timestamps?
-                # (optional, default: no)
-tsa_name        = yes   # Must the TSA name be included in the reply?
-                # (optional, default: no)
-ess_cert_id_chain   = no    # Must the ESS cert id chain be included?
-                # (optional, default: no)
+clock_precision_digits  = 0                         # number of digits after dot. (optional)
+ordering        = yes                               # Is ordering defined for timestamps?
+                                                    # (optional, default: no)
+tsa_name        = yes                               # Must the TSA name be included in the reply?
+                                                    # (optional, default: no)
+ess_cert_id_chain   = no                            # Must the ESS cert id chain be included?
+                                                    # (optional, default: no)

@@ -38,6 +38,14 @@
       owner: root
       group: root
       mode: "0755"
+    - path: "{{ openvas_ca_cert_path }}/newcerts"
+      owner: root
+      group: root
+      mode: "0755"
+    - path: "{{ openvas_ca_cert_path }}/crl"
+      owner: root
+      group: root
+      mode: "0755"
     - path: "{{ openvas_ca_key_path }}"
       owner: root
       group: root
@@ -58,3 +66,85 @@
     - "openssl.cnf.j2"
   tags:
     - openvas-ssl-ca-config
+
+- name: Check for existance of CA index
+  stat:
+    path: "{{ openvas_ca_cert_path }}/index.txt"
+  register: openvas_ca_index_file
+
+- name: Create the CA index file
+  file:
+    path: "{{ openvas_ca_cert_path }}/index.txt"
+    state: touch
+  when: openvas_ca_index_file.stat.exists == False
+
+- name: Check for existance of CA serial
+  stat:
+    path: "{{ openvas_ca_cert_path }}/serial"
+  register: openvas_ca_serial_file
+
+- name: Create the CA serial file
+  template:
+    src: openssl-serial.j2
+    dest: "{{ openvas_ca_cert_path }}/serial"
+  when: openvas_ca_serial_file.stat.exists == False
+
+- name: Generate CA key
+  command: >
+    openssl genrsa
+    -out {{ openvas_ca_key_path }}/cakey.pem
+    {{ openvas_ca_default_bits }}
+  args:
+    creates: "{{ openvas_ca_key_path }}/cakey.pem"
+
+- name: Generate CA cert
+  command: >
+    openssl req -new -x509
+    -days 1460
+    -extensions v3_ca
+    -subj "{{ openvas_ca_cert_subject }}"
+    -key {{ openvas_ca_key_path }}/cakey.pem
+    -out {{ openvas_ca_cert_path }}/cacert.pem
+  args:
+    creates: "{{ openvas_ca_cert_path }}/cacert.pem"
+
+- name: Generate server key
+  command: >
+    openssl genrsa
+    -out {{ openvas_ca_key_path }}/serverkey.pem
+    {{ openvas_ca_default_bits }}
+  args:
+    creates: "{{ openvas_ca_key_path }}/serverkey.pem"
+
+- name: Check for existance of server cert
+  stat:
+    path: "{{ openvas_ca_cert_path }}/servercert.pem"
+  register: openvas_server_cert
+
+- name: Generate server cert request
+  command: >
+    openssl req -new
+    -subj "{{ openvas_ca_cert_subject }}"
+    -key {{ openvas_ca_key_path }}/serverkey.pem
+    -out /tmp/serverreq.pem
+  args:
+    creates: /tmp/servercert.pem
+  when: openvas_server_cert.stat.exists == False
+
+- name: Generate server cert response
+  command: >
+    openssl ca
+    -name OpenVAS-CA
+    -batch
+    -days 365
+    -in /tmp/serverreq.pem
+    -out {{ openvas_ca_cert_path }}/servercert.pem
+  args:
+    creates: "{{ openvas_ca_cert_path }}/servercert.pem"
+  when: openvas_server_cert.stat.exists == False
+
+- name: Remove server cert request
+  file:
+    path: /tmp/servercert.pem
+    state: absent
+
