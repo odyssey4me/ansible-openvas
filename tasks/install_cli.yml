@@ -59,9 +59,9 @@
     chdir: "{{ openvas_src_path }}/{{ openvas_src_cli | basename | replace('.tar.gz', '') }}/build"
   with_items:
     - "cmake .."
-    - "make"
-    - "make doc-full"
-    - "make install"
+    - "make --quiet"
+    - "make --quiet doc-full"
+    - "make --quiet install"
   when: openvas_cli_makefile.stat.exists == False
   tags:
     - openvas-cli-src-install
